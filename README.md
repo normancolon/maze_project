@@ -1,72 +1,81 @@
-# Maze Project
 
-## Overview
 
-The Maze Project is a simple 2D maze game built using C and the SDL2 library. The game features texture mapping, collision detection, and player movement within a maze environment.
+# The Maze
 
-## Features
-
-- 2D maze rendering
-- Player movement
-- Collision detection
-- Texture mapping for walls
-- Minimap rendering
+The Maze is a game created using the C programming language, SDL2, and the concept of raycasting. On the map, the player can move in all four directions and rotate their field of view. This game includes collision detection on walls and an objective point in yellow on the minimap.
 
 ## Installation
 
-### Prerequisites
+Clone this repo:
+```bash
+git clone git@github.com:normancolon/maze_project.git
+```
 
-- SDL2 library
-- SDL2_image library
+First, ensure SDL2 is installed. Then execute the following command to compile all the files and create the executable of the game:
 
-### Building the Project
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/maze_project.git
-    cd maze_project
-    ```
-
-2. Install the required libraries (Linux):
-    ```bash
-    sudo apt-get install libsdl2-dev libsdl2-image-dev
-    ```
-
-3. Compile the project:
-    ```bash
-    gcc -Wall -Werror -Wextra -pedantic ./src/*.c -lm -o maze `sdl2-config --cflags` `sdl2-config --libs`
-    ```
+```bash
+make
+```
 
 ## Usage
 
-Run the compiled executable:
+After successfully compiling, run the program using the following command:
+
 ```bash
 ./maze
+```
 
-File Structure
-css
-Copy code
-maze_project/
-├── hdrs/
-│   ├── h.h
-│   └── upng.h
-├── img/
-│   ├── redbrick.png
-│   ├── purplestone.png
-│   ├── mossystone.png
-│   ├── graystone.png
-│   ├── colorstone.png
-│   ├── bluestone.png
-│   ├── wood.png
-│   └── eagle.png
-├── src/
-│   ├── main.c
-│   ├── texture.c
-│   ├── wall.c
-│   ├── player.c
-│   ├── map.c
-│   └── draw.c
-└── README.md
-Dependencies
-SDL2: Simple DirectMedia Layer library for 2D graphics
-SDL2_image: Image file loading library for SDL2
+## Controls
+
+- **W** - Move forward
+- **S** - Move backward
+- **A** - Look left
+- **D** - Look right
+- **Left arrow** - Turn left
+- **Right arrow** - Turn right
+- **M** - Enable and disable minimap view
+- **Q** - Enable and disable weapon view
+
+***Have fun!***
+
+## Directories
+
+[`src`](https://github.com/normancolon/maze_project/tree/main/src)
+- Contains all the source code files written in C.
+
+[`h`](https://github.com/normancolon/maze_project/tree/main/h)
+- Contains all the header files.
+
+[`maps`](https://github.com/normancolon/maze_project/tree/main/maps)
+- Contains map data files used by the program to output the map layout.
+
+[`img`](https://github.com/normancolon/maze_project/tree/main/images)
+- Contains image files.
+
+## Contributing
+
+- Read the source files in the `src` folder and the header files in the `h` folder.
+- Clone the repo and make a new branch:
+  ```bash
+  git checkout -b [name_of_new_branch]
+  ```
+- Add a feature, fix a bug, or refactor some code :)
+- Write/update tests for the changes you made, if necessary.
+- Open a Pull Request with a comprehensive description of changes.
+
+## Related
+
+Resources on SDL and Raycasting:
+- [SDL2 tutorial](https://lazyfoo.net/tutorials/SDL/index.php)
+- [SDL2 Functions](https://wiki.libsdl.org/SDL2/CategoryAPI)
+- [Raycasting tutorial 1](https://permadi.com/1996/05/ray-casting-tutorial-table-of-contents/)
+- [Raycasting tutorial 2](https://lodev.org/cgtutor/raycasting.html)
+
+## License
+
+*BSD*
+
+## Author
+
+Norman Colon Cruz <acolon@slc53.com>
+

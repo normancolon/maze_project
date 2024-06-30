@@ -1,8 +1,16 @@
-build:
-	gcc -Wall -Werror -Wextra -pedantic ./src/*.c -lm -o maze `sdl2-config --cflags` `sdl2-config --libs`;
+CC = gcc
+INC = inc/*.h
+SRC = src/*.c
+NAME = maze
+RM = rm -f
+CFLAGS = -Wall -Werror -Wextra -pedantic
 
-run:
-	./maze;
+all: compile
+
+compile: $(SRC)
+	$(CC) $(CFALGS) $(SRC) -o $(NAME) -lm -lSDL2
 
 clean:
-	rm maze;
+	$(RM) *~ $(NAME)
+
+re: fclean all

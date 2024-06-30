@@ -1,87 +1,74 @@
-#include "../hdrs/h.h"
-
-bool GameRunning = false;
-int TicksLastFrame;
-player_t player;
+#include <SDL2/SDL.h>
+#include "../h/h.h"
 
 /**
- * setup_game - initialize player variables and load wall textures
- */
-void setup_game(void)
-{
-    player.x = SCREEN_WIDTH / 2;
-    player.y = SCREEN_HEIGHT / 2;
-    player.width = 1;
-    player.height = 30;
-    player.walkDirection = 0;
-    player.walkSpeed = 100;
-    player.turnDirection = 0;
-    player.turnSpeed = 45 * (PI / 180);
-    player.rotationAngle = PI / 2;
-    WallTexturesready();
-}
-
-/**
- * update_game - update game delta time, the ticks last frame,
- *               the player movement and the ray casting
- */
-void update_game(void)
-{
-    float DeltaTime;
-    int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
-
-    if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH)
-    {
-        SDL_Delay(timeToWait);
-    }
-    DeltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
-
-    TicksLastFrame = SDL_GetTicks();
-
-    movePlayer(DeltaTime);
-    castAllRays();
-}
-
-/**
- * render_game - calls all functions needed for on-screen rendering
- */
-void render_game(void)
-{
-    clearColorBuffer(0xFF000000);
-
-    renderWall();
-    renderMap();
-    renderRays();
-    renderPlayer();
-
-    renderColorBuffer();
-}
-
-/**
- * destroy_game - free wall textures and destroy window
- */
-void destroy_game(void)
-{
-    freeWallTextures();
-    destroyWindow();
-}
-
-/**
- * main - main function
- * Return: 0
+ * main - entry point in the program
+ *
+ * Return: 0 on success else 1
  */
 int main(void)
 {
-    GameRunning = initializeWindow();
+	SDL_Instance instance;
+	SDL_Player player;
+	status_t status = {0, 0, 0, 0, 0, 0, 0};
+	SDL_bool minimap = SDL_TRUE;
+	map_t map;
 
-    setup_game();
+	if (init_instance(&instance) != 0)
+		return (1);
 
-    while (GameRunning)
-    {
-        handleInput();
-        update_game();
-        render_game();
-    }
-    destroy_game();
-    return (0);
+	while (!status.quit)
+	{
+		map = init_map("maps/map");
+		init_player(&player, map.cols - 1,
+			map.rows - 1, -PI / 2, PI / 3);
+
+		while (!status.quit && !status.new_lvl)
+		{
+			set_color(&instance, "white");
+			SDL_RenderClear(instance.renderer);
+			poll_events(&player, map, &status);
+
+			switch (status.lvl)
+			{
+				case 1:
+					instance.bmp = NULL;
+					raycasting(instance, &player, map);
+					if (status.minimap != 0)
+						draw_map(instance, &player, map);
+					if (status.weapon != 0)
+						draw_gun(&instance);
+					exit_game(&player, &status, map);
+					break;
+				case 2:
+					load_image(&instance, "images/end.bmp");
+					break;
+				case 3:
+					status.quit = 1;
+			}
+			SDL_RenderPresent(instance.renderer);
+		}
+		status.new_lvl = 0;
+	}
+	SDL_DestroyRenderer(instance.renderer);
+	SDL_DestroyWindow(instance.window);
+	SDL_Quit();
+	return (0);
 }
+
+/**
+ * exit_game - checks if the player has reached the exit
+ * @player: player instance
+ * @status: game status
+ * @map: game map
+ */
+void exit_game(SDL_Player *player, status_t *status, map_t map)
+{
+	int row, col;
+
+	row = player->x / BOXSIZE;
+	col = player->y / BOXSIZE;
+	if (map.layout[row][col] == 5)
+		status->lvl += 1;
+}
+
