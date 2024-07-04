@@ -1,74 +1,98 @@
-#include <SDL2/SDL.h>
-#include "../h/h.h"
+#include "../headers/main.h"
+#include "../headers/weapon.h"
+#include "../headers/enemy.h"
 
-/**
- * main - entry point in the program
- *
- * Return: 0 on success else 1
- */
+bool GameRunning = false;
+int TicksLastFrame;
+bool isMiniMapVisible = true;
+
+int currentWeaponIndex = 0;
+bool isWeaponVisible = true;
+const char *weaponFiles[] = {
+    "./images/gun1.png",
+    "./images/gun2.png",
+    "./images/gun3.png",
+    "./images/gun5.png",
+    "./images/gun6.png"
+};
+
 int main(void)
 {
-	SDL_Instance instance;
-	SDL_Player player;
-	status_t status = {0, 0, 0, 0, 0, 0, 0};
-	SDL_bool minimap = SDL_TRUE;
-	map_t map;
+    setupGame();
 
-	if (init_instance(&instance) != 0)
-		return (1);
+    while (GameRunning) {
+        handleInput();
+        updateGame();
+        renderGame();
+        SDL_Delay(10);
+    }
 
-	while (!status.quit)
-	{
-		map = init_map("maps/map");
-		init_player(&player, map.cols - 1,
-			map.rows - 1, -PI / 2, PI / 3);
-
-		while (!status.quit && !status.new_lvl)
-		{
-			set_color(&instance, "white");
-			SDL_RenderClear(instance.renderer);
-			poll_events(&player, map, &status);
-
-			switch (status.lvl)
-			{
-				case 1:
-					instance.bmp = NULL;
-					raycasting(instance, &player, map);
-					if (status.minimap != 0)
-						draw_map(instance, &player, map);
-					if (status.weapon != 0)
-						draw_gun(&instance);
-					exit_game(&player, &status, map);
-					break;
-				case 2:
-					load_image(&instance, "images/end.bmp");
-					break;
-				case 3:
-					status.quit = 1;
-			}
-			SDL_RenderPresent(instance.renderer);
-		}
-		status.new_lvl = 0;
-	}
-	SDL_DestroyRenderer(instance.renderer);
-	SDL_DestroyWindow(instance.window);
-	SDL_Quit();
-	return (0);
+    destroyGame();
+    return 0;
 }
 
-/**
- * exit_game - checks if the player has reached the exit
- * @player: player instance
- * @status: game status
- * @map: game map
- */
-void exit_game(SDL_Player *player, status_t *status, map_t map)
+void setupGame(void)
 {
-	int row, col;
+    GameRunning = initializeWindow();
+    if (!GameRunning) {
+        printf("Failed to initialize window\n");
+        return;
+    }
+    initializePlayer();
+    initializeRaindrops();
 
-	row = player->x / BOXSIZE;
-	col = player->y / BOXSIZE;
-	if (map.layout[row][col] == 5)
-		status->lvl += 1;
+    loadFloorTextures();
+    loadCeilingTextures();
+    loadWallTextures();
+    loadEnemyTexture();
+
+    initializeEnemy(WINDOW_WIDTH / 2 - 84, WINDOW_HEIGHT / 2 - 144); /* Center the enemy */
+}
+
+void updateGame(void)
+{
+    srand(SDL_GetTicks());
+
+    float deltaTime;
+    int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
+
+    if (timeToWait > 0 && timeToWait <= FRAME_TIME_LENGTH) {
+        SDL_Delay(timeToWait);
+    }
+
+    deltaTime = (SDL_GetTicks() - TicksLastFrame) / 1000.0f;
+    TicksLastFrame = SDL_GetTicks();
+
+    movePlayer(deltaTime);
+
+    castAllRays();
+}
+
+void renderGame(void)
+{
+    clearColorBuffer(0xFF000000);
+    renderWalls();
+    if (isMiniMapVisible) {
+        renderMap();
+        renderRays();
+        renderPlayer();
+    }
+    renderEnemy(); /* Render the enemy */
+    renderColorBuffer();
+    renderWeapon();
+    if (isRaining) {
+        updateRaindrops();
+        renderRaindrops();
+    }
+    SDL_RenderPresent(renderer);
+}
+
+void destroyGame(void)
+{
+    freeWallTextures();
+    freeCeilingTextures();
+    freeFloorTextures();
+    freeEnemyTexture(); /* Free enemy texture */
+    destroyWindow();
 }
 

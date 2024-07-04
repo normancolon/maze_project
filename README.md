@@ -1,81 +1,143 @@
+# README.md for Maze 3D Game
 
+Welcome to the Maze 3D  project! This repository contains the source code for a raycasting-based 3D game implemented in C using the SDL library. Below is an overview of each file in the project, explaining its purpose and the functions it contains.
 
-# The Maze
+## File Summaries
 
-The Maze is a game created using the C programming language, SDL2, and the concept of raycasting. On the map, the player can move in all four directions and rotate their field of view. This game includes collision detection on walls and an objective point in yellow on the minimap.
+### main.c
+- **Purpose**: Serves as the entry point of the program and orchestrates the game loop.
+- **Functions**: 
+  - `main`
+  - `setupGame`
+  - `updateGame`
+  - `renderGame`
+  - `destroyGame`
 
-## Installation
+### window.h
+- **Purpose**: Manages window initialization and destruction using SDL.
+- **Functions**: 
+  - `initializeWindow`
+  - `destroyWindow`
 
-Clone this repo:
-```bash
-git clone git@github.com:normancolon/maze_project.git
-```
+### input.c
+- **Purpose**: Handles user input, including keyboard events.
+- **Functions**: 
+  - `handleInput`
+  - `handleKeyDown`
+  - `handleKeyUp`
 
-First, ensure SDL2 is installed. Then execute the following command to compile all the files and create the executable of the game:
+### walls.c
+- **Purpose**: Handles rendering walls and managing wall textures.
+- **Functions**: 
+  - `loadWallTextures`
+  - `freeWallTextures`
+  - `renderWalls`
+  - `adjustColorIntensity`
 
-```bash
-make
-```
+### floor.c
+- **Purpose**: Handles rendering the floor projection and managing floor textures.
+- **Functions**: 
+  - `loadFloorTextures`
+  - `freeFloorTextures`
+  - `renderFloor`
 
-## Usage
+### ceiling.c
+- **Purpose**: Handles rendering the ceiling projection and managing ceiling textures.
+- **Functions**: 
+  - `loadCeilingTextures`
+  - `freeCeilingTextures`
+  - `renderCeiling`
 
-After successfully compiling, run the program using the following command:
+### color_buffer.c
+- **Purpose**: Manages the color buffer for rendering.
+- **Functions**: 
+  - `clearColorBuffer`
+  - `renderColorBuffer`
 
-```bash
-./maze
-```
+### draw.c
+- **Purpose**: Provides drawing functions like drawing pixels, lines, and rectangles.
+- **Functions**: 
+  - `drawPixel`
+  - `drawLine`
+  - `drawRect`
 
-## Controls
+### player.c
+- **Purpose**: Manages the player's position, movement, and rotation.
+- **Functions**: 
+  - `initializePlayer`
+  - `renderPlayer`
+  - `movePlayer`
 
-- **W** - Move forward
-- **S** - Move backward
-- **A** - Look left
-- **D** - Look right
-- **Left arrow** - Turn left
-- **Right arrow** - Turn right
-- **M** - Enable and disable minimap view
-- **Q** - Enable and disable weapon view
+### rays.c
+- **Purpose**: Handles raycasting for rendering 3D environments in 2D. These functions work together to cast rays, detect intersections with walls, and calculate distances, allowing for accurate rendering of the game environment.
+- **Functions**: 
+  - `castRay`
+  - `castAllRays`
+  - `distanceBetweenPoints`
+  - `renderRays`
+  - `vertIntersection`
+  - `horzIntersection`
+  - `isRayFacingDown`
+  - `isRayFacingUp`
+  - `isRayFacingRight`
+  - `isRayFacingLeft`
+  - `calculateHorizontalIntercept`
+  - `checkHorizontalWallCollision`
+  - `calculateVerticalIntercept`
+  - `checkVerticalWallCollision`
 
-***Have fun!***
+### rain.c
+- **Purpose**: Manages rendering raindrops and updating their positions.
+- **Functions**: 
+  - `initializeRaindrops`
+  - `updateRaindrops`
+  - `renderRaindrops`
 
-## Directories
+### upng.h
+- **Purpose**: Provides functionality for handling PNG image files.
+- **Functions**: Various functions for loading PNG images.
 
-[`src`](https://github.com/normancolon/maze_project/tree/main/src)
-- Contains all the source code files written in C.
+### collision.h
+- **Purpose**: Provides collision detection functionality.
+- **Functions**: 
+  - `DetectCollision`
 
-[`h`](https://github.com/normancolon/maze_project/tree/main/h)
-- Contains all the header files.
+### map.h
+- **Purpose**: Handles rendering and managing the game map.
+- **Functions**: 
+  - `isInsideMap`
+  - `getMapValue`
+  - `renderMap`
 
-[`maps`](https://github.com/normancolon/maze_project/tree/main/maps)
-- Contains map data files used by the program to output the map layout.
+### weapon.h
+- **Purpose**: Manages weapon textures and rendering.
+- **Functions**: 
+  - `renderWeapon`
 
-[`img`](https://github.com/normancolon/maze_project/tree/main/images)
-- Contains image files.
+## How to Run the Game
+
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/normancolon/maze_project.git
+   cd Maze3DGame
+   ```
+
+2. Compile the project:
+   ```sh
+   make
+   ```
+
+3. Run the game:
+   ```sh
+   ./maze_game
+   ```
 
 ## Contributing
 
-- Read the source files in the `src` folder and the header files in the `h` folder.
-- Clone the repo and make a new branch:
-  ```bash
-  git checkout -b [name_of_new_branch]
-  ```
-- Add a feature, fix a bug, or refactor some code :)
-- Write/update tests for the changes you made, if necessary.
-- Open a Pull Request with a comprehensive description of changes.
-
-## Related
-
-Resources on SDL and Raycasting:
-- [SDL2 tutorial](https://lazyfoo.net/tutorials/SDL/index.php)
-- [SDL2 Functions](https://wiki.libsdl.org/SDL2/CategoryAPI)
-- [Raycasting tutorial 1](https://permadi.com/1996/05/ray-casting-tutorial-table-of-contents/)
-- [Raycasting tutorial 2](https://lodev.org/cgtutor/raycasting.html)
-
-## License
-
-*BSD*
+Feel free to explore and contribute to this Maze 3D Game project! If you have any questions or suggestions, please don't hesitate to reach out.
 
 ## Author
 
-Norman Colon Cruz <acolon@slc53.com>
+This project is maintained by Norman Colon. You can find more of his work on [GitHub](https://github.com/normancolon).
+
 

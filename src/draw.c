@@ -1,94 +1,64 @@
-#include <SDL2/SDL.h>
-#include "../h/h.h"
+#include "../headers/draw.h"
 
-void draw_map(SDL_Instance instance, SDL_Player *player, map_t map)
-{
-	SDL_Rect rect;
-	int i, j;
-
-	rect.x = 1;
-	rect.y = 1;
-	rect.w = MINIMAPW / map.cols;
-	rect.h = MINIMAPH / map.rows;
-
-	for (i = 0; i < map.rows; i++)
-	{
-		for (j = 0; j < map.cols; j++)
-		{
-			if (map.layout[i][j] == 0)
-				set_color(&instance, "green");
-			else if (map.layout[i][j] == 5)
-				set_color(&instance, "yellow");
-			else
-				set_color(&instance, "white");
-
-			SDL_RenderFillRect(instance.renderer, &rect);
-			rect.x += rect.w;
-		}
-		rect.x = 1;
-		rect.y += rect.h;
-	}
-
-	draw_player(instance, player, MINIMAPW / map.cols, MINIMAPH / map.rows);
+/**
+ * drawPixel - Assign a color to each pixel
+ * @pixelX: X pixel coordinate
+ * @pixelY: Y pixel coordinate
+ * @pixelColor: Pixel color
+ */
+void drawPixel(int pixelX, int pixelY, color_t pixelColor) {
+    colorBuffer[(WINDOW_WIDTH * pixelY) + pixelX] = pixelColor;
 }
 
-void draw_player(SDL_Instance instance, SDL_Player *player,
-	int width_ratio, int height_ratio)
-{
-	SDL_FRect rect_p;
-	float x1, y1, x0, y0;
+/**
+ * drawLine - Draw a line
+ * @startX: X coordinate of the starting point
+ * @startY: Y coordinate of the starting point
+ * @endX: X coordinate of the ending point
+ * @endY: Y coordinate of the ending point
+ * @lineColor: Color of the line
+ */
+void drawLine(int startX, int startY, int endX, int endY, color_t lineColor) {
+    float xIncrement, yIncrement, currentX, currentY;
+    int i, longestSideLength, deltaX, deltaY;
 
-	x0 = player->x / BOXSIZE * width_ratio;
-	y0 = player->y / BOXSIZE * height_ratio;
-	x1 = 20 * cos(player->angle) + x0;
-	y1 = 20 * sin(player->angle) + y0;
-	rect_p.w = 8;
-	rect_p.h = 8;
-	rect_p.x = x0 - (rect_p.w / 2);
-	rect_p.y = y0 - (rect_p.h / 2);
+    deltaX = (endX - startX);
+    deltaY = (endY - startY);
 
-	set_color(&instance, "red");
-	SDL_RenderFillRectF(instance.renderer, &rect_p);
-	SDL_RenderDrawLineF(instance.renderer, x0, y0, x1, y1);
+    /* Determine the longest side length */
+    longestSideLength = (abs(deltaX) >= abs(deltaY)) ? abs(deltaX) : abs(deltaY);
+
+    /* Calculate the increments for each step along the line */
+    xIncrement = deltaX / (float)longestSideLength;
+    yIncrement = deltaY / (float)longestSideLength;
+
+    /* Initialize the starting point */
+    currentX = startX;
+    currentY = startY;
+
+    /* Draw the line by stepping along it and drawing pixels */
+    for (i = 0; i < longestSideLength; i++) {
+        drawPixel(round(currentX), round(currentY), lineColor);
+        currentX += xIncrement;
+        currentY += yIncrement;
+    }
 }
 
-void raycasting(SDL_Instance instance, SDL_Player *player, map_t map)
-{
-	float length, tmp = player->angle;
-	float i, lineHeight;
-	int j;
+/**
+ * drawRect - Draw a rectangle
+ * @topLeftX: X coordinate of the top-left corner
+ * @topLeftY: Y coordinate of the top-left corner
+ * @rectWidth: Width of the rectangle
+ * @rectHeight: Height of the rectangle
+ * @rectColor: Color of the rectangle
+ */
+void drawRect(int topLeftX, int topLeftY, int rectWidth, int rectHeight, color_t rectColor) {
+    int i, j;
 
-	j = 0;
-	for (i = -player->FOV / 2; i <= player->FOV / 2;
-	     i += player->FOV / SCREENWIDTH)
-	{
-		j += 1;
-		player->angle = tmp + i;
-		length = calc_impact(instance, player, map);
-		lineHeight = SCREENHEIGHT / ((length * cos(i)) / BOXSIZE);
-		draw_line(instance, lineHeight, j);
-	}
-	player->angle = tmp;
-}
-
-void draw_line(SDL_Instance instance, double lineHeight, int lineX)
-{
-	float start, end;
-
-	start = -lineHeight / 2 + SCREENHEIGHT / 2;
-	end = lineHeight / 2 + SCREENHEIGHT / 2;
-
-	if (start < 0)
-		start = 0;
-	if (end >= SCREENHEIGHT)
-		end = SCREENHEIGHT - 1;
-
-	SDL_RenderDrawLineF(instance.renderer, lineX, start, lineX, end);
-
-	set_color(&instance, "blue");
-	SDL_RenderDrawLineF(instance.renderer, lineX, 0, lineX, start);
-
-	set_color(&instance, "red");
-	SDL_RenderDrawLineF(instance.renderer, lineX, end, lineX, SCREENHEIGHT);
+    for (i = topLeftX; i <= (topLeftX + rectWidth); i++) {
+        for (j = topLeftY; j <= (topLeftY + rectHeight); j++) {
+            drawPixel(i, j, rectColor);
+        }
+    }
 }
 
