@@ -45,6 +45,17 @@ void renderMap(void) {
                 TILE_SIZE * MINIMAP_SCALE_FACTOR,
                 tileColor
             );
+
+            /* Highlight the winning square */
+            if (i == WINNING_ROW && j == WINNING_COL) {
+                drawRect(
+                    tileX * MINIMAP_SCALE_FACTOR,
+                    tileY * MINIMAP_SCALE_FACTOR,
+                    TILE_SIZE * MINIMAP_SCALE_FACTOR,
+                    TILE_SIZE * MINIMAP_SCALE_FACTOR,
+                    0xFF0000FF  /* Red color to highlight */
+                );
+            }
         }
     }
 }

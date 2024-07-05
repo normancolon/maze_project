@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <SDL2/SDL_image.h>
 
 #include "window.h"
 #include "rain.h"
@@ -14,18 +15,11 @@
 #include "input.h"
 #include "player.h"
 #include "enemy.h"
+#include "map.h"
 
-/* Constants */
 #define FPS 60
 #define FRAME_TIME_LENGTH (1000 / FPS)
 
-/**
- * struct texture_s - struct for textures
- * @width: texture width
- * @height: texture height
- * @texture_buffer: buffer for texture data
- * @upngTexture: PNG texture
- */
 typedef struct texture_s
 {
     int width;
@@ -34,16 +28,16 @@ typedef struct texture_s
     upng_t *upngTexture;
 } texture_t;
 
-/* Function prototypes */
 void setupGame(void);
 void updateGame(void);
 void renderGame(void);
 void destroyGame(void);
 
-/* External variable declarations */
 extern bool GameRunning;
 extern int TicksLastFrame;
 extern bool isMiniMapVisible;
+extern bool GameWon;
+extern SDL_Texture *winTexture;
 
 #endif /* MAIN_H */
 

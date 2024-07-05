@@ -1,4 +1,9 @@
 #include "../headers/player.h"
+#include "../headers/map.h"
+#include "../headers/main.h"
+
+/* Declare external variables */
+extern bool GameWon;
 
 /* Structure to store player information */
 player_t player;
@@ -49,6 +54,22 @@ void movePlayer(float DeltaTime) {
     if (!DetectCollision(newPlayerX, newPlayerY)) {
         player.x = newPlayerX;
         player.y = newPlayerY;
+    }
+
+    checkWinCondition();
+}
+
+/**
+ * checkWinCondition - Check if the player has reached the winning square
+ */
+void checkWinCondition(void) {
+    int playerRow = player.y / TILE_SIZE;
+    int playerCol = player.x / TILE_SIZE;
+
+    if (playerRow == WINNING_ROW && playerCol == WINNING_COL) {
+        GameRunning = false;
+        GameWon = true;
+        printf("You Win!\n");
     }
 }
 

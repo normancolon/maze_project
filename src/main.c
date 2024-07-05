@@ -1,10 +1,15 @@
 #include "../headers/main.h"
 #include "../headers/weapon.h"
 #include "../headers/enemy.h"
+#include "../headers/player.h"
+#include "../headers/map.h"
 
 bool GameRunning = false;
+bool GameWon = false;
 int TicksLastFrame;
 bool isMiniMapVisible = true;
+
+SDL_Texture *winTexture = NULL;
 
 int currentWeaponIndex = 0;
 bool isWeaponVisible = true;
@@ -47,10 +52,22 @@ void setupGame(void)
     loadEnemyTexture();
 
     initializeEnemy(WINDOW_WIDTH / 2 - 84, WINDOW_HEIGHT / 2 - 144); /* Center the enemy */
+
+
+    SDL_Surface *winSurface = IMG_Load("./images/2bw1030.png");
+    if (!winSurface) {
+        printf("Failed to load win image: %s\n", IMG_GetError());
+        GameRunning = false;
+    } else {
+        winTexture = SDL_CreateTextureFromSurface(renderer, winSurface);
+        SDL_FreeSurface(winSurface);
+    }
 }
 
 void updateGame(void)
 {
+    if (GameWon) return;
+
     srand(SDL_GetTicks());
 
     float deltaTime;
@@ -84,7 +101,15 @@ void renderGame(void)
         updateRaindrops();
         renderRaindrops();
     }
-    SDL_RenderPresent(renderer);
+
+    if (GameWon) {
+
+        SDL_Rect winRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+        SDL_RenderCopy(renderer, winTexture, NULL, &winRect);
+        SDL_RenderPresent(renderer);
+    } else {
+        SDL_RenderPresent(renderer);
+    }
 }
 
 void destroyGame(void)
@@ -93,6 +118,9 @@ void destroyGame(void)
     freeCeilingTextures();
     freeFloorTextures();
     freeEnemyTexture(); /* Free enemy texture */
+    if (winTexture) {
+        SDL_DestroyTexture(winTexture); /* Free win texture */
+    }
     destroyWindow();
 }
 

@@ -1,5 +1,8 @@
 #include "../headers/input.h"
 
+/* Declare external variables */
+extern bool GameWon;
+
 /**
  * handleInput - Function to handle user input events
  */
@@ -39,6 +42,14 @@ void handleInput(void)
  */
 void handleKeyDown(SDL_Keycode key)
 {
+    if (GameWon) {
+        if (key == SDLK_SPACE) {
+            /* Exit the game when spacebar is pressed after winning */
+            GameRunning = false;
+        }
+        return; /* Ignore other key presses after winning */
+    }
+
     switch (key)
     {
     case SDLK_ESCAPE:
@@ -84,6 +95,10 @@ void handleKeyDown(SDL_Keycode key)
  */
 void handleKeyUp(SDL_Keycode key)
 {
+    if (GameWon) {
+        return; /* Ignore key releases after winning */
+    }
+
     switch (key)
     {
     case SDLK_UP:
