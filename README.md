@@ -119,12 +119,12 @@ Welcome to the Maze 3D  project! This repository contains the source code for a 
 1. Clone the repository:
    ```sh
    git clone https://github.com/normancolon/maze_project.git
-   cd Maze3DGame
+   cd maze_project
    ```
 
 2. Compile the project:
    ```sh
-   make
+   gcc -g src/*.c -lm -lSDL2 -lSDL2_image -o maze_game
    ```
 
 3. Run the game:
