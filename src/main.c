@@ -27,7 +27,9 @@ int main(void)
 
     while (GameRunning) {
         handleInput();
-        updateGame();
+        if (!GameWon) {
+            updateGame();
+        }
         renderGame();
         SDL_Delay(10);
     }
@@ -43,6 +45,7 @@ void setupGame(void)
         printf("Failed to initialize window\n");
         return;
     }
+
     initializePlayer();
     initializeRaindrops();
 
@@ -51,8 +54,7 @@ void setupGame(void)
     loadWallTextures();
     loadEnemyTexture();
 
-    initializeEnemy(WINDOW_WIDTH / 2 - 84, WINDOW_HEIGHT / 2 - 144); /* Center the enemy */
-
+    initializeEnemy(400, 400);
 
     SDL_Surface *winSurface = IMG_Load("./images/2bw1030.png");
     if (!winSurface) {
@@ -66,8 +68,6 @@ void setupGame(void)
 
 void updateGame(void)
 {
-    if (GameWon) return;
-
     srand(SDL_GetTicks());
 
     float deltaTime;
@@ -87,6 +87,13 @@ void updateGame(void)
 
 void renderGame(void)
 {
+    if (GameWon) {
+        SDL_Rect winRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+        SDL_RenderCopy(renderer, winTexture, NULL, &winRect);
+        SDL_RenderPresent(renderer);
+        return;
+    }
+
     clearColorBuffer(0xFF000000);
     renderWalls();
     if (isMiniMapVisible) {
@@ -94,33 +101,25 @@ void renderGame(void)
         renderRays();
         renderPlayer();
     }
-    renderEnemy(); /* Render the enemy */
+    renderEnemy();
     renderColorBuffer();
     renderWeapon();
     if (isRaining) {
         updateRaindrops();
         renderRaindrops();
     }
-
-    if (GameWon) {
-
-        SDL_Rect winRect = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-        SDL_RenderCopy(renderer, winTexture, NULL, &winRect);
-        SDL_RenderPresent(renderer);
-    } else {
-        SDL_RenderPresent(renderer);
-    }
+    SDL_RenderPresent(renderer);
 }
 
 void destroyGame(void)
 {
+    if (winTexture) {
+        SDL_DestroyTexture(winTexture);
+    }
     freeWallTextures();
     freeCeilingTextures();
     freeFloorTextures();
-    freeEnemyTexture(); /* Free enemy texture */
-    if (winTexture) {
-        SDL_DestroyTexture(winTexture); /* Free win texture */
-    }
+    freeEnemyTexture();
     destroyWindow();
 }
 

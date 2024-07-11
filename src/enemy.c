@@ -12,8 +12,7 @@ void loadEnemyTexture(void)
         return;
     }
 
-    /* Enable transparency for the texture */
-    SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 255, 0, 255));  /* Adjust the RGB value to match the transparency color */
+    SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 255, 0, 255));
 
     enemy.texture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     if (!enemy.texture) {
@@ -37,9 +36,10 @@ void initializeEnemy(float x, float y)
 
 void renderEnemy(void)
 {
+    printf("Rendering enemy at position (%d, %d) with size (%d, %d)\n", (int)enemy.x, (int)enemy.y, enemy.width, enemy.height);
+
     SDL_Rect enemyRect = { (int)enemy.x, (int)enemy.y, enemy.width, enemy.height };
     SDL_RenderCopy(renderer, enemy.texture, NULL, &enemyRect);
-    printf("Rendering enemy at position (%d, %d) with size (%d, %d)\n", (int)enemy.x, (int)enemy.y, enemy.width, enemy.height);
 }
 
 void freeEnemyTexture(void)

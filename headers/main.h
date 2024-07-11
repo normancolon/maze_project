@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "window.h"
 #include "rain.h"
@@ -17,6 +19,7 @@
 #include "enemy.h"
 #include "map.h"
 
+// Constants
 #define FPS 60
 #define FRAME_TIME_LENGTH (1000 / FPS)
 
@@ -34,9 +37,9 @@ void renderGame(void);
 void destroyGame(void);
 
 extern bool GameRunning;
+extern bool GameWon;
 extern int TicksLastFrame;
 extern bool isMiniMapVisible;
-extern bool GameWon;
 extern SDL_Texture *winTexture;
 
 #endif /* MAIN_H */

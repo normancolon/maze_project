@@ -67,9 +67,7 @@ void checkWinCondition(void) {
     int playerCol = player.x / TILE_SIZE;
 
     if (playerRow == WINNING_ROW && playerCol == WINNING_COL) {
-        GameRunning = false;
         GameWon = true;
-        printf("You Win!\n");
     }
 }
 

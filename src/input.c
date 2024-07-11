@@ -43,8 +43,8 @@ void handleInput(void)
 void handleKeyDown(SDL_Keycode key)
 {
     if (GameWon) {
-        if (key == SDLK_SPACE) {
-            /* Exit the game when spacebar is pressed after winning */
+        if (key == SDLK_BACKSPACE) {
+            /* Exit the game when backspace is pressed after winning */
             GameRunning = false;
         }
         return; /* Ignore other key presses after winning */
